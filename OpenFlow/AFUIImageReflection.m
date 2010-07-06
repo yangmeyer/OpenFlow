@@ -23,7 +23,7 @@
  * OTHER DEALINGS IN THE SOFTWARE.
  */
 #import "AFUIImageReflection.h"
-
+#import "AFOpenFlowConstants.h."
 
 @implementation UIImage (AFUIImageReflection)
 
@@ -60,7 +60,7 @@
 	CGGradientRelease(grayScaleGradient);
 	
 	// add a black fill with 50% opacity
-	CGContextSetGrayFillColor(gradientBitmapContext, 0.0, 0.5);
+	CGContextSetGrayFillColor(gradientBitmapContext, 0.0, kReflectionSurfaceAlpha);
 	CGContextFillRect(gradientBitmapContext, CGRectMake(0, 0, 1, reflectionHeight));
     
     // convert the context into a CGImageRef and release the context
@@ -72,13 +72,13 @@
     CGImageRef reflectionImage = CGImageCreateWithMask(self.CGImage, gradientMaskImage);
     CGImageRelease(gradientMaskImage);
 	
-	CGSize size = CGSizeMake(self.size.width, self.size.height + reflectionHeight);
+	CGSize size = CGSizeMake(self.size.width, self.size.height + reflectionHeight + kVerticalPerspectiveShift);
 	
 	UIGraphicsBeginImageContext(size);
 	
 	[self drawAtPoint:CGPointZero];
 	CGContextRef context = UIGraphicsGetCurrentContext();
-	CGContextDrawImage(context, CGRectMake(0, self.size.height, self.size.width, reflectionHeight), reflectionImage);
+	CGContextDrawImage(context, CGRectMake(0, self.size.height, self.size.width, reflectionHeight+kVerticalPerspectiveShift), reflectionImage);
 	
 	UIImage* result = UIGraphicsGetImageFromCurrentImageContext();
 	UIGraphicsEndImageContext();
