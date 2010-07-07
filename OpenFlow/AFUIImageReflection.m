@@ -23,7 +23,7 @@
  * OTHER DEALINGS IN THE SOFTWARE.
  */
 #import "AFUIImageReflection.h"
-#import "AFOpenFlowConstants.h."
+#import "AFOpenFlowConstants.h"
 
 @implementation UIImage (AFUIImageReflection)
 
