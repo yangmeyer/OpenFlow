@@ -26,10 +26,12 @@
 #import "AFOpenFlowConstants.h"
 #import "AFUIImageReflection.h"
 
+#define COVER_BUFFER 6
 
 @interface AFOpenFlowView (hidden)
 
 - (void)setUpInitialState;
+- (void)layoutCovers;
 - (AFItemView *)coverForIndex:(int)coverIndex;
 - (void)updateCoverImage:(AFItemView *)aCover;
 - (AFItemView *)dequeueReusableCover;
@@ -65,7 +67,7 @@ const static CGFloat kReflectionFraction = 0.85;
 	self.multipleTouchEnabled = NO;
 	self.userInteractionEnabled = YES;
 	self.autoresizesSubviews = YES;
-	self.layer.position=CGPointMake(self.frame.size.width / 2, self.frame.size.height / 2);
+	//	self.layer.position=CGPointMake(self.frame.origin.x + self.frame.size.width / 2, self.frame.origin.y + self.frame.size.height / 2);
 	
 	// Initialize the visible and selected cover range.
 	lowerVisibleCover = upperVisibleCover = -1;
@@ -82,7 +84,18 @@ const static CGFloat kReflectionFraction = 0.85;
 	sublayerTransform.m34 = -0.01;
 	[scrollView.layer setSublayerTransform:sublayerTransform];
 	
-	[self setBounds:self.frame];
+	[self layoutCovers];
+}
+
+- (void)layoutCovers {
+	halfScreenWidth = self.bounds.size.width / 2;
+	halfScreenHeight = self.bounds.size.height / 2;
+	
+	int lowerBound = MAX(-1, selectedCoverView.number - COVER_BUFFER);
+	int upperBound = MIN(self.numberOfImages - 1, selectedCoverView.number + COVER_BUFFER);
+	
+	[self layoutCovers:selectedCoverView.number fromCover:lowerBound toCover:upperBound];
+	[self centerOnSelectedCover:NO];
 }
 
 - (AFItemView *)coverForIndex:(int)coverIndex {
@@ -178,8 +191,6 @@ const static CGFloat kReflectionFraction = 0.85;
 @implementation AFOpenFlowView
 @synthesize dataSource, viewDelegate, numberOfImages, defaultImage;
 
-#define COVER_BUFFER 6
-
 - (void)awakeFromNib {
 	[self setUpInitialState];
 }
@@ -210,14 +221,7 @@ const static CGFloat kReflectionFraction = 0.85;
 - (void)setBounds:(CGRect)newSize {
 	[super setBounds:newSize];
 	
-	halfScreenWidth = self.bounds.size.width / 2;
-	halfScreenHeight = self.bounds.size.height / 2;
-
-	int lowerBound = MAX(-1, selectedCoverView.number - COVER_BUFFER);
-	int upperBound = MIN(self.numberOfImages - 1, selectedCoverView.number + COVER_BUFFER);
-
-	[self layoutCovers:selectedCoverView.number fromCover:lowerBound toCover:upperBound];
-	[self centerOnSelectedCover:NO];
+	[self layoutCovers];
 }
 
 - (void)setNumberOfImages:(int)newNumberOfImages {
