@@ -30,4 +30,4 @@
 #define SIDE_COVER_ZPOSITION -60 // -80
 
 #define kVerticalPerspectiveShift 100
-#define kReflectionSurfaceAlpha 0.9
+#define kReflectionSurfaceAlpha 0.8
